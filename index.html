@@ -1,1065 +1,308 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CG Folk Music Studio</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>व्यापारी - Business Tycoon</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-
-body{
-  background:#10121a;
-  color:#fff;
-  font-family:Arial,sans-serif;
-}
-
-header{
-  padding:27px 15px;
-  text-align:center;
-  background:linear-gradient(120deg,#281b29,#54321c);
-  border-bottom:2px solid #d99a45;
-}
-
-header h1{
-  color:#ffca75;
-  font-size:30px;
-  letter-spacing:2px;
-}
-
-header p{
-  color:#ddd;
-  margin-top:9px;
-  font-size:13px;
-}
-
-.container{
-  max-width:1150px;
-  margin:auto;
-  padding:22px 15px;
-}
-
-.panel{
-  background:#1b1e29;
-  border:1px solid #343848;
-  border-radius:15px;
-  padding:20px;
-  margin-bottom:22px;
-}
-
-h2{
-  color:#ffc16a;
-  margin-bottom:17px;
-  font-size:20px;
-}
-
-.controls{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-  gap:20px;
-}
-
-.control label{
-  display:block;
-  margin-bottom:12px;
-  color:#ddd;
-}
-
-input[type=range]{
-  width:100%;
-  accent-color:#ffb64e;
-}
-
-.value{
-  color:#ffc16a;
-  font-weight:bold;
-}
-
-.instrument-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:17px;
-}
-
-.instrument{
-  background:linear-gradient(145deg,#292d3c,#1b1e28);
-  border:1px solid #42485a;
-  border-radius:15px;
-  padding:20px 12px;
-  text-align:center;
-  cursor:pointer;
-  transition:.18s;
-  user-select:none;
-}
-
-.instrument:hover{
-  border-color:#ffbd62;
-  transform:translateY(-3px);
-}
-
-.instrument.playing{
-  background:linear-gradient(145deg,#62431e,#292d3c);
-  border-color:#ffc16a;
-  transform:scale(.97);
-}
-
-.instrument .emoji{
-  font-size:53px;
-  margin-bottom:12px;
-}
-
-.instrument h3{
-  color:#ffc16a;
-  font-size:18px;
-  margin-bottom:7px;
-}
-
-.instrument p{
-  font-size:12px;
-  color:#aaa;
-  line-height:1.5;
-}
-
-.play{
-  background:#ffbd62;
-  color:#21180c;
-  border:none;
-  border-radius:7px;
-  padding:10px 20px;
-  margin-top:14px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-button:hover{filter:brightness(1.1)}
-
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
-
-.action-btn{
-  background:#ffbd62;
-  color:#21180c;
-  border:none;
-  border-radius:8px;
-  padding:12px 19px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.secondary{
-  background:#343b4d;
-  color:white;
-}
-
-#status{
-  color:#70e6a0;
-  margin-top:15px;
-  font-size:13px;
-}
-
-select{
-  background:#303548;
-  color:white;
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #555;
-}
-
-footer{
-  text-align:center;
-  color:#888;
-  padding:25px;
-  font-size:13px;
-}
-
-@media(max-width:500px){
-  header h1{font-size:22px}
-  .instrument-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:10px;
-  }
-  .instrument{padding:16px 7px}
-  .instrument .emoji{font-size:40px}
-  .instrument h3{font-size:15px}
+*{box-sizing:border-box}
+body{margin:0;background:#101827;color:#fff;font-family:Arial,sans-serif}
+header{text-align:center;padding:18px;background:#182438;border-bottom:2px solid #eabf4b}
+h1{margin:0;color:#f5c451;font-size:32px}
+header p{color:#b7c5d8;margin:7px 0 0}
+.container{max-width:1100px;margin:auto;padding:15px}
+.panel{background:#1b2a40;border:1px solid #ffffff20;border-radius:15px;padding:15px;margin-bottom:15px}
+input,select{width:100%;padding:11px;margin:6px 0 12px;background:#101827;color:white;border:1px solid #53657e;border-radius:8px}
+button{background:#f5c451;color:#172033;border:0;padding:12px 17px;border-radius:9px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.4}
+.secondary{background:#40536d;color:white}
+.hidden{display:none}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.stat{background:#101827;padding:10px;border-radius:9px;flex:1;min-width:120px}
+.board{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.tile{background:#293b52;border:1px solid #ffffff25;border-radius:8px;min-height:90px;padding:7px;display:flex;flex-direction:column;justify-content:space-between;font-size:12px;position:relative}
+.tile strong{font-size:12px}
+.tile small{color:#f5c451}
+.tile.current{outline:3px solid #f5c451}
+.tile .owner{color:#75e2b2;font-size:10px}
+.tile .tokens{font-size:16px}
+.center{grid-column:2/6;grid-row:2/6;background:#142238;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:15px;min-height:220px}
+.center h2{color:#f5c451}
+.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+.player{background:#101827;padding:10px;border-radius:9px;border-left:5px solid #f5c451}
+.log{height:170px;overflow:auto;background:#101827;padding:10px;border-radius:9px;font-size:13px}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:15px}
+.dialog{background:#1b2a40;padding:22px;border-radius:15px;width:min(420px,100%);border:1px solid #ffffff30}
+.dialog h2{color:#f5c451}
+@media(max-width:600px){
+ .container{padding:8px}.tile{min-height:75px;padding:4px;font-size:10px}
+ .tile strong{font-size:10px}.center{min-height:160px;padding:7px}
+ .board{gap:3px}
 }
 </style>
 </head>
-
 <body>
-
 <header>
-  <h1>🥁 CG FOLK MUSIC STUDIO</h1>
-  <p>छत्तीसगढ़ के पारंपरिक वाद्ययंत्रों का डिजिटल संगीत संसार</p>
+<h1>💼 व्यापारी</h1>
+<p>खरीदो • किराया कमाओ • कारोबार बढ़ाओ</p>
 </header>
 
 <div class="container">
-
-<!-- AUDIO CONTROLS -->
-
-<div class="panel">
-<h2>🎚 Music Control Panel</h2>
-
-<div class="controls">
-
-<div class="control">
-<label>Master Volume <span class="value" id="volText">80%</span></label>
-<input type="range" id="volume" min="0" max="100" value="80">
-</div>
-
-<div class="control">
-<label>Pitch <span class="value" id="pitchText">100%</span></label>
-<input type="range" id="pitch" min="60" max="150" value="100">
-</div>
-
-<div class="control">
-<label>Reverb <span class="value" id="revText">20%</span></label>
-<input type="range" id="reverb" min="0" max="100" value="20">
-</div>
-
-<div class="control">
-<label>Tempo <span class="value" id="tempoText">100 BPM</span></label>
-<input type="range" id="tempo" min="40" max="220" value="100">
-</div>
-
-</div>
-</div>
-
-<!-- INSTRUMENTS -->
-
-<div class="panel">
-<h2>🎵 छत्तीसगढ़ के 10 पारंपरिक वाद्ययंत्र</h2>
-
-<div class="instrument-grid">
-
-<div class="instrument" data-id="mandar"
-onclick="playInstrument('mandar')">
-<div class="emoji">🥁</div>
-<h3>मांदर</h3>
-<p>आदिवासी लोकनृत्य का पारंपरिक ताल वाद्य</p>
-<button class="play">▶ बजाएँ</button>
-</div>
-
-<div class="instrument" data-id="nagada"
-onclick="playInstrument('nagada')">
-<div class="emoji">🪘</div>
-<h3>नगाड़ा</h3>
-<p>गंभीर और शक्तिशाली ध्वनि वाला वाद्य</p>
-<button class="play">▶ बजाएँ</button>
-</div>
-
-<div class="instrument" data-id="timki"
-onclick="playInstrument('timki')">
-<div class="emoji">🥁</div>
-<h3>टिमकी</h3>
-<p>छोटे आकार का ताल वाद्य</p>
-<button class="play">▶ बजाएँ</button>
-</div>
-
-<div class="instrument" data-id="dhol"
-onclick="playInstrument('dhol')">
-<div class="emoji">🥁</div>
-<h3>ढोल</h3>
-<p>लोकगीत और नृत्य की जोशीली ताल</p>
-<button class="play">▶ बजाएँ</button>
-</div>
-
-<div class="instrument" data-id="dholak"
-onclick="playInstrument('dholak')">
-<div class="emoji">🪘</div>
-<h3>ढोलक</h3>
-<p>दोनों तरफ से बजने वाला ताल वाद्य</p>
-<button class="play">▶ बजाएँ</button>
-</div>
-
-<div class="instrument" data-id="mohri"
-onclick="playInstrument('mohri')">
-<div class="emoji">🎺</div>
-<h3>मोहरी</h3>
-<p>लोक संगीत का पारंपरिक फूँक वाद्य</p>
-<button class="play">▶ बजाएँ</button>
-</div>
-
-<div class="instrument" data-id="bansuri"
-onclick="playInstrument('bansuri')">
-<div class="emoji">🪈</div>
-<h3>बांसुरी</h3>
-<p>मधुर और सुरीली धुन</p>
-<button class="play">▶ बजाएँ</button>
-</div>
-
-<div class="instrument" data-id="jhanjh"
-onclick="playInstrument('jhanjh')">
-<div class="emoji">🔔</div>
-<h3>झांझ</h3>
-<p>धातु की गूंजती हुई ताल</p>
-<button class="play">▶ बजाएँ</button>
-</div>
-
-<div class="instrument" data-id="manjira"
-onclick="playInstrument('manjira')">
-<div class="emoji">🔔</div>
-<h3>मंजीरा</h3>
-<p>भजन और लोकगीतों में प्रयुक्त वाद्य</p>
-<button class="play">▶ बजाएँ</button>
-</div>
-
-<div class="instrument" data-id="gudum"
-onclick="playInstrument('gudum')">
-<div class="emoji">🪘</div>
-<h3>गुदुम बाजा</h3>
-<p>पारंपरिक लोक ताल वाद्य</p>
-<button class="play">▶ बजाएँ</button>
-</div>
-
-</div>
-</div>
-
-<!-- PLAY CONTROLS -->
-
-<div class="panel">
-<h2>🎼 Music Studio</h2>
-
-<div class="actions">
-<button class="action-btn" onclick="startAuto()">▶ Auto Rhythm</button>
-<button class="action-btn secondary" onclick="stopAuto()">■ Stop</button>
-<button class="action-btn secondary" onclick="stopAll()">🔇 Stop All</button>
-</div>
-
-<br>
-
-<select id="rhythm">
-<option value="karama">करमा ताल</option>
-<option value="panthi">पंथी ताल</option>
-<option value="suwa">सुआ ताल</option>
-<option value="dadra">दादरा ताल</option>
+<section class="panel" id="setup">
+<h2>नया गेम शुरू करें</h2>
+<label>खिलाड़ियों की संख्या</label>
+<select id="count">
+<option value="2">2 खिलाड़ी</option>
+<option value="3">3 खिलाड़ी</option>
+<option value="4">4 खिलाड़ी</option>
 </select>
+<div id="nameInputs"></div>
+<button onclick="startGame()">गेम शुरू करें ▶</button>
+</section>
 
-<p id="status">Ready! किसी वाद्ययंत्र को दबाकर बजाएँ।</p>
+<section id="game" class="hidden">
+<div class="panel">
+<div class="stats">
+<div class="stat">🎯 <b id="turn">खिलाड़ी की बारी</b></div>
+<div class="stat">🔄 राउंड: <b id="round">1</b></div>
+<div class="stat">🎲 पासा: <b id="dice">-</b></div>
 </div>
-
-<!-- RECORDING -->
+<div class="board" id="board"></div>
+<div class="actions">
+<button id="roll" onclick="rollDice()">🎲 पासा फेंको</button>
+<button id="next" class="secondary" onclick="nextTurn()" disabled>अगली बारी →</button>
+<button class="secondary" onclick="rules()">नियम</button>
+</div>
+</div>
 
 <div class="panel">
-<h2>🔴 Recording Studio</h2>
-
-<div class="actions">
-<button class="action-btn" onclick="startRecording()">● Record</button>
-<button class="action-btn secondary" onclick="stopRecording()">■ Stop</button>
-<button class="action-btn secondary" onclick="replayRecording()">▶ Replay</button>
-<button class="action-btn secondary" onclick="downloadRecording()">⬇ Download WAV</button>
-<button class="action-btn secondary" onclick="clearRecording()">Clear</button>
+<h3>👥 खिलाड़ी और उनकी पूंजी</h3>
+<div class="players" id="players"></div>
 </div>
 
-<p id="recordStatus">No recording yet.</p>
+<div class="panel">
+<h3>📢 कारोबार की खबरें</h3>
+<div class="log" id="log"></div>
+</div>
+</section>
 </div>
 
-<footer>
-CG FOLK MUSIC STUDIO © 2026<br>
-Celebrating Chhattisgarh Folk Music
-</footer>
-
+<div class="modal" id="modal">
+<div class="dialog">
+<h2 id="modalTitle"></h2>
+<p id="modalText"></p>
+<div class="actions" id="modalActions"></div>
+</div>
 </div>
 
 <script>
+const places=[
+{name:"शुरुआत",type:"start"},
+{name:"चाय दुकान",price:800,rent:120,color:"#d97706"},
+{name:"भाग्य कार्ड",type:"chance"},
+{name:"सब्जी मंडी",price:1000,rent:150,color:"#65a30d"},
+{name:"नगर कर",type:"tax",value:500},
+{name:"बस स्टैंड",price:1400,rent:180,color:"#0ea5e9"},
+{name:"किराना स्टोर",price:1600,rent:220,color:"#a78bfa"},
+{name:"भाग्य कार्ड",type:"chance"},
+{name:"मोबाइल शॉप",price:1900,rent:260,color:"#ec4899"},
+{name:"होटल",price:2300,rent:320,color:"#f97316"},
+{name:"आराम गृह",type:"rest"},
+{name:"कपड़ा दुकान",price:2600,rent:360,color:"#14b8a6"},
+{name:"पेट्रोल पंप",price:3000,rent:420,color:"#eab308"},
+{name:"नगर कर",type:"tax",value:700},
+{name:"सिनेमा हॉल",price:3400,rent:480,color:"#8b5cf6"},
+{name:"भाग्य कार्ड",type:"chance"},
+{name:"गोदाम",price:3800,rent:550,color:"#64748b"},
+{name:"फैक्ट्री",price:4300,rent:650,color:"#ef4444"},
+{name:"आराम गृह",type:"rest"},
+{name:"शॉपिंग मॉल",price:4800,rent:750,color:"#06b6d4"},
+{name:"आईटी कंपनी",price:5500,rent:900,color:"#22c55e"},
+{name:"भाग्य कार्ड",type:"chance"},
+{name:"होटल चेन",price:6200,rent:1050,color:"#f43f5e"},
+{name:"लक्जरी रिसॉर्ट",price:7000,rent:1250,color:"#c084fc"}
+];
 
-// AUDIO ENGINE
-
-let ctx=null;
-let master=null;
-let convolver=null;
-let wetGain=null;
-let dryGain=null;
-let recording=false;
-let events=[];
-let startTime=0;
-let autoTimer=null;
-let timers=[];
-let activeSources=new Set();
-
+let players=[],turn=0,round=1,rolled=false,finished=false;
 const $=id=>document.getElementById(id);
 
-function initAudio(){
-
-if(ctx)return;
-
-ctx=new(window.AudioContext||window.webkitAudioContext)();
-
-master=ctx.createGain();
-master.gain.value=.8;
-master.connect(ctx.destination);
-
-dryGain=ctx.createGain();
-wetGain=ctx.createGain();
-
-dryGain.connect(master);
-wetGain.connect(master);
-
-convolver=ctx.createConvolver();
-
-// Small synthetic room impulse
-const length=ctx.sampleRate*1.5;
-const impulse=ctx.createBuffer(2,length,ctx.sampleRate);
-
-for(let c=0;c<2;c++){
-let data=impulse.getChannelData(c);
-
-for(let i=0;i<length;i++){
-data[i]=(Math.random()*2-1)*
-Math.pow(1-i/length,3);
+function makeInputs(){
+ $("nameInputs").innerHTML="";
+ for(let i=1;i<=4;i++){
+  let label=document.createElement("label");
+  label.textContent="खिलाड़ी "+i+" का नाम";
+  let input=document.createElement("input");
+  input.id="name"+i;
+  input.value=["","आप","दोस्त","खिलाड़ी 3","खिलाड़ी 4"][i];
+  if(i>2)input.className="optional";
+  $("nameInputs").append(label,input);
+ }
 }
-}
+$("count").addEventListener("change",makeInputs);
+makeInputs();
 
-convolver.buffer=impulse;
-convolver.connect(wetGain);
-wetGain.connect(master);
-
-dryGain.gain.value=.8;
-wetGain.gain.value=.2;
-
+function startGame(){
+ let count=+$("count").value;
+ const colors=["#4da3ff","#ff6b6b","#43d19e","#c084fc"];
+ players=[];
+ for(let i=1;i<=count;i++){
+  players.push({
+   name:$("name"+i).value.trim()||"खिलाड़ी "+i,
+   cash:10000,pos:0,props:[],color:colors[i-1],alive:true
+  });
+ }
+ turn=0;round=1;rolled=false;finished=false;
+ $("setup").classList.add("hidden");
+ $("game").classList.remove("hidden");
+ log("नया गेम शुरू हुआ! सभी को ₹10,000 मिले।");
+ render();
 }
 
-async function ready(){
+function render(){
+ $("turn").textContent=players[turn].name;
+ $("round").textContent=round;
+ $("players").innerHTML=players.map((p,i)=>`
+ <div class="player" style="border-color:${p.color}">
+ <b>${safe(p.name)}</b><br>
+ 💰 ₹${p.cash.toLocaleString("en-IN")}<br>
+ <small>संपत्ति: ${p.props.length} ${p.alive?"":"| दिवालिया"}</small>
+ </div>`).join("");
 
-initAudio();
+ $("board").innerHTML=places.map((s,i)=>{
+  let owner=players.find(p=>p.props.includes(i));
+  let tokens=players.filter(p=>p.alive&&p.pos===i)
+    .map(p=>`<span style="color:${p.color}">●</span>`).join("");
+  return `<div class="tile ${players[turn].pos===i?"current":""}">
+   <div style="height:5px;background:${owner?owner.color:s.color||"#718096"};border-radius:5px"></div>
+   <strong>${s.name}</strong>
+   <small>${s.price?"कीमत ₹"+s.price:s.type==="tax"?"कर ₹"+s.value:""}</small>
+   <span class="owner">${owner?"मालिक: "+safe(owner.name):""}</span>
+   <div class="tokens">${tokens}</div>
+  </div>`;
+ }).join("");
 
-if(ctx.state==="suspended"){
-await ctx.resume();
+ $("roll").disabled=rolled||finished;
+ $("next").disabled=!rolled||finished;
 }
 
+function rollDice(){
+ if(rolled||finished)return;
+ rolled=true;
+ let p=players[turn],dice=1+Math.floor(Math.random()*6);
+ $("dice").textContent=dice;
+ let old=p.pos;
+ p.pos=(p.pos+dice)%places.length;
+ if(p.pos<old){
+  p.cash+=1500;
+  log(p.name+" ने शुरुआत पार की और ₹1,500 बोनस पाया!");
+ }
+ log(p.name+" ने "+dice+" फेंका और "+places[p.pos].name+" पर पहुँचा।");
+ resolve(p);
+ render();
 }
 
-// NOISE GENERATOR
-
-function noise(duration){
-
-const length=Math.floor(ctx.sampleRate*duration);
-const buffer=ctx.createBuffer(1,length,ctx.sampleRate);
-const data=buffer.getChannelData(0);
-
-for(let i=0;i<length;i++){
-data[i]=Math.random()*2-1;
+function resolve(p){
+ let s=places[p.pos],owner=players.find(x=>x.props.includes(p.pos));
+ if(s.price){
+  if(!owner){
+   show("नई प्रॉपर्टी!",s.name+" की कीमत ₹"+s.price+" है। क्या खरीदना चाहते हैं?",[
+    ["खरीदें",()=>{
+     if(p.cash>=s.price){
+      p.cash-=s.price;p.props.push(p.pos);
+      log(p.name+" ने "+s.name+" खरीदा।");
+     }else log("पर्याप्त पैसे नहीं हैं!");
+     close();render();
+    }],
+    ["नहीं",close]
+   ]);
+  }else if(owner!==p){
+   p.cash-=s.rent;owner.cash+=s.rent;
+   log(p.name+" ने "+owner.name+" को ₹"+s.rent+" किराया दिया।");
+   checkBankrupt(p);
+  }else log("आप अपनी ही प्रॉपर्टी पर आए हैं।");
+ }
+ else if(s.type==="tax"){
+  p.cash-=s.value;
+  log(p.name+" ने ₹"+s.value+" नगर कर दिया।");
+  checkBankrupt(p);
+ }
+ else if(s.type==="chance"){
+  let cards=[
+   ["बड़ा ऑर्डर मिला",1200],["गाड़ी की मरम्मत",-700],
+   ["पुराना उधार वापस",900],["मार्केट में नुकसान",-1000],
+   ["त्योहार की बिक्री",1500],["बिजली बिल",-450]
+  ];
+  let c=cards[Math.floor(Math.random()*cards.length)];
+  p.cash+=c[1];
+  log(p.name+": "+c[0]+" ("+(c[1]>0?"+":"")+"₹"+c[1]+")");
+  checkBankrupt(p);
+  show("भाग्य कार्ड",c[0]+"। "+(c[1]>0?"आपको ":"आपके खाते से ")+"₹"+Math.abs(c[1])+(c[1]>0?" मिले।":" कटे।"),[["ठीक है",close]]);
+ }else if(s.type==="rest"){
+  log(p.name+" ने आराम किया।");
+ }
 }
 
-return buffer;
-
+function checkBankrupt(p){
+ if(p.cash>=0)return;
+ p.alive=false;
+ p.props.forEach(i=>{});
+ p.props=[];
+ log(p.name+" दिवालिया हो गया!");
+ let alive=players.filter(x=>x.alive);
+ if(alive.length===1){
+  finished=true;
+  show("🏆 विजेता!",alive[0].name+" ने व्यापारी गेम जीत लिया!",[
+   ["नया गेम",()=>location.reload()]
+  ]);
+ }
 }
 
-// DRUM SOUND ENGINE
-
-function drumSound(freq,decay,noiseAmount=0.4,
-pitchDrop=.65,pan=0){
-
-const now=ctx.currentTime;
-
-let osc=ctx.createOscillator();
-let gain=ctx.createGain();
-
-let panNode=ctx.createStereoPanner();
-
-osc.type="sine";
-
-osc.frequency.setValueAtTime(freq,now);
-osc.frequency.exponentialRampToValueAtTime(
-Math.max(35,freq*pitchDrop),now+decay
-);
-
-gain.gain.setValueAtTime(.001,now);
-gain.gain.linearRampToValueAtTime(1,now+.004);
-gain.gain.exponentialRampToValueAtTime(
-.001,now+decay
-);
-
-osc.connect(gain);
-gain.connect(panNode);
-
-panNode.pan.value=pan;
-panNode.connect(dryGain);
-panNode.connect(convolver);
-
-osc.start(now);
-osc.stop(now+decay+.02);
-
-activeSources.add(osc);
-osc.onended=()=>activeSources.delete(osc);
-
-// Noise attack
-
-if(noiseAmount>0){
-
-let source=ctx.createBufferSource();
-let filter=ctx.createBiquadFilter();
-let ng=ctx.createGain();
-
-source.buffer=noise(.12);
-filter.type="bandpass";
-filter.frequency.value=freq*2.5;
-filter.Q.value=.8;
-
-ng.gain.setValueAtTime(noiseAmount,now);
-ng.gain.exponentialRampToValueAtTime(.001,now+.11);
-
-source.connect(filter);
-filter.connect(ng);
-ng.connect(panNode);
-
-source.start(now);
-source.stop(now+.12);
-
-activeSources.add(source);
-source.onended=()=>activeSources.delete(source);
-
+function nextTurn(){
+ if(!rolled)return;
+ rolled=false;
+ let next=turn;
+ do{
+  next=(next+1)%players.length;
+  if(next===0)round++;
+ }while(!players[next].alive);
+ turn=next;
+ $("dice").textContent="-";
+ render();
 }
 
+function log(message){
+ let div=document.createElement("div");
+ div.textContent="• "+message;
+ $("log").prepend(div);
 }
 
-// METALLIC SOUND
-
-function metalSound(freq,duration,amount=1){
-
-const now=ctx.currentTime;
-
-const ratios=[1,1.31,1.72,2.14,2.77,3.43];
-
-ratios.forEach((ratio,i)=>{
-
-let osc=ctx.createOscillator();
-let gain=ctx.createGain();
-
-osc.type="sine";
-osc.frequency.value=freq*ratio;
-
-gain.gain.setValueAtTime(.001,now);
-gain.gain.linearRampToValueAtTime(
-amount/(i+1),now+.003
-);
-gain.gain.exponentialRampToValueAtTime(
-.001,now+duration
-);
-
-osc.connect(gain);
-gain.connect(dryGain);
-gain.connect(convolver);
-
-osc.start(now);
-osc.stop(now+duration+.02);
-
-activeSources.add(osc);
-osc.onended=()=>activeSources.delete(osc);
-
-});
-
+function show(title,message,buttons){
+ $("modalTitle").textContent=title;
+ $("modalText").textContent=message;
+ $("modalActions").innerHTML="";
+ buttons.forEach(([label,action],i)=>{
+  let b=document.createElement("button");
+  b.textContent=label;
+  if(i)b.className="secondary";
+  b.onclick=action;
+  $("modalActions").appendChild(b);
+ });
+ $("modal").style.display="flex";
 }
+function close(){$("modal").style.display="none"}
 
-// FLUTE / WIND ENGINE
-
-function windSound(freq, duration,bright=false){
-
-const now=ctx.currentTime;
-
-let osc=ctx.createOscillator();
-let osc2=ctx.createOscillator();
-
-let gain=ctx.createGain();
-let filter=ctx.createBiquadFilter();
-
-osc.type=bright?"sawtooth":"sine";
-osc.frequency.value=freq;
-
-osc2.type="sine";
-osc2.frequency.value=freq*2.01;
-
-filter.type="lowpass";
-filter.frequency.value=bright?3000:1800;
-
-gain.gain.setValueAtTime(.001,now);
-gain.gain.linearRampToValueAtTime(.35,now+.08);
-gain.gain.setValueAtTime(.35,now+duration*.7);
-gain.gain.exponentialRampToValueAtTime(
-.001,now+duration
-);
-
-osc.connect(filter);
-osc2.connect(filter);
-filter.connect(gain);
-
-gain.connect(dryGain);
-gain.connect(convolver);
-
-osc.start(now);
-osc2.start(now);
-
-osc.stop(now+duration);
-osc2.stop(now+duration);
-
+function rules(){
+ show("गेम के नियम",
+ "1. हर खिलाड़ी को ₹10,000 मिलते हैं। 2. पासा फेंककर आगे बढ़ें। 3. खाली दुकान या जगह खरीदें। 4. दूसरे की प्रॉपर्टी पर किराया दें। 5. शुरुआत पार करने पर ₹1,500 बोनस। 6. टैक्स और भाग्य कार्ड का असर लागू होगा। 7. आखिरी बचा खिलाड़ी विजेता है।",
+ [["समझ गया",close]]);
 }
-
-// INSTRUMENTS
-
-const instruments={
-
-mandar:()=>{
- drumSound(125,.30,.55,.55,-.2);
- drumSound(85,.22,.35,.75,.2);
-},
-
-nagada:()=>{
- drumSound(65,.85,.85,.35,0);
- drumSound(95,.5,.4,.45,0);
-},
-
-timki:()=>{
- drumSound(240,.13,.55,.45,0);
-},
-
-dhol:()=>{
- drumSound(105,.32,.7,.42,-.4);
- drumSound(170,.22,.5,.55,.4);
-},
-
-dholak:()=>{
- drumSound(190,.18,.5,.55,-.3);
- drumSound(115,.32,.3,.65,.3);
-},
-
-mohri:()=>{
- windSound(440, .65,true);
-},
-
-bansuri:()=>{
- windSound(523.25, .9,false);
-},
-
-jhanjh:()=>{
- metalSound(800,1.2,.85);
-},
-
-manjira:()=>{
- metalSound(1450,.55,.6);
-},
-
-gudum:()=>{
- drumSound(100,.55,.65,.48,0);
- drumSound(165,.22,.25,.6,.2);
+function safe(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
 }
-
-};
-
-// MAIN PLAY FUNCTION
-
-async function playInstrument(name,save=true){
-
-await ready();
-
-if(!instruments[name])return;
-
-instruments[name]();
-
-if(save && recording){
-
-events.push({
-name:name,
-time:performance.now()-startTime
-});
-
-}
-
-const card=document.querySelector(
-'[data-id="'+name+'"]'
-);
-
-if(card){
-
-card.classList.add("playing");
-
-setTimeout(()=>{
-card.classList.remove("playing");
-},170);
-
-}
-
-$("status").textContent=
-"Playing: "+name.toUpperCase();
-
-}
-
-// CONTROLS
-
-$("volume").oninput=function(){
-
-$("volText").textContent=this.value+"%";
-
-if(master){
-master.gain.value=this.value/100;
-}
-
-};
-
-$("pitch").oninput=function(){
-
-$("pitchText").textContent=this.value+"%";
-};
-
-// Reverb controls
-
-$("reverb").oninput=function(){
-
-let value=this.value/100;
-
-$("revText").textContent=this.value+"%";
-
-if(wetGain && dryGain){
-
-wetGain.gain.value=value;
-dryGain.gain.value=1-value*.65;
-
-}
-
-};
-
-$("tempo").oninput=function(){
-
-$("tempoText").textContent=this.value+" BPM";
-
-};
-
-// KEYBOARD SHORTCUTS
-
-const keyboard={
-"1":"mandar",
-"2":"nagada",
-"3":"timki",
-"4":"dhol",
-"5":"dholak",
-"6":"mohri",
-"7":"bansuri",
-"8":"jhanjh",
-"9":"manjira",
-"0":"gudum"
-};
-
-document.addEventListener("keydown",e=>{
-
-if(e.repeat)return;
-
-if(["INPUT","SELECT","TEXTAREA"].includes(
-document.activeElement.tagName))return;
-
-const name=keyboard[e.key];
-
-if(name)playInstrument(name);
-
-});
-
-// AUTO RHYTHM PATTERNS
-
-const rhythms={
-
-karama:[
-"mandar","mandar","timki","mandar",
-"nagada","mandar","timki","dhol"
-],
-
-panthi:[
-"nagada","dhol","timki","dhol",
-"nagada","timki","dhol","mandar"
-],
-
-suwa:[
-"mandar","manjira","manjira","mandar",
-"manjira","mandar","timki","manjira"
-],
-
-dadra:[
-"dholak","manjira","dholak",
-"manjira","timki","dholak"
-]
-
-};
-
-function startAuto(){
-
-stopAuto();
-
-let pattern=rhythms[$("rhythm").value];
-
-let index=0;
-
-let interval=60000/Number($("tempo").value);
-
-$("status").textContent="Auto Rhythm Playing";
-
-autoTimer=setInterval(()=>{
-
-playInstrument(pattern[index],false);
-
-index=(index+1)%pattern.length;
-
-},interval);
-
-}
-
-function stopAuto(){
-
-if(autoTimer){
-clearInterval(autoTimer);
-autoTimer=null;
-}
-
-$("status").textContent="Rhythm stopped";
-
-}
-
-// STOP ALL
-
-function stopAll(){
-
-stopAuto();
-
-activeSources.forEach(source=>{
-
-try{source.stop()}catch(e){}
-
-});
-
-activeSources.clear();
-
-$("status").textContent="All sounds stopped";
-
-}
-
-// RECORDING
-
-function startRecording(){
-
-stopAuto();
-
-events=[];
-recording=true;
-startTime=performance.now();
-
-$("recordStatus").textContent="Recording...";
-
-}
-
-function stopRecording(){
-
-recording=false;
-
-$("recordStatus").textContent=
-events.length+" musical strokes recorded.";
-
-}
-
-// REPLAY
-
-function replayRecording(){
-
-stopRecording();
-
-timers.forEach(t=>clearTimeout(t));
-timers=[];
-
-if(events.length===0){
-
-alert("Record something first!");
-return;
-
-}
-
-events.forEach(event=>{
-
-let t=setTimeout(()=>{
-
-playInstrument(event.name,false);
-
-},event.time);
-
-timers.push(t);
-
-});
-
-$("recordStatus").textContent="Replaying music...";
-
-}
-
-function clearRecording(){
-
-stopRecording();
-
-timers.forEach(t=>clearTimeout(t));
-timers=[];
-
-events=[];
-
-$("recordStatus").textContent="Recording cleared.";
-
-}
-
-// WAV EXPORT
-
-function downloadRecording(){
-
-if(!events.length){
-
-alert("No recording available!");
-return;
-
-}
-
-$("recordStatus").textContent=
-"Rendering WAV audio...";
-
-let duration=Math.max(
-2,
-events[events.length-1].time/1000+2
-);
-
-let sampleRate=44100;
-
-let offline=new OfflineAudioContext(
-2,
-Math.ceil(duration*sampleRate),
-sampleRate
-);
-
-let masterOffline=offline.createGain();
-masterOffline.gain.value=
-Number($("volume").value)/100;
-
-masterOffline.connect(offline.destination);
-
-function makeTone(time,freq,decay,amp,type){
-
-let osc=offline.createOscillator();
-let gain=offline.createGain();
-
-osc.type=type;
-osc.frequency.setValueAtTime(freq,time);
-osc.frequency.exponentialRampToValueAtTime(
-Math.max(30,freq*.55),time+decay
-);
-
-gain.gain.setValueAtTime(.001,time);
-gain.gain.linearRampToValueAtTime(amp,time+.005);
-gain.gain.exponentialRampToValueAtTime(
-.001,time+decay
-);
-
-osc.connect(gain);
-gain.connect(masterOffline);
-
-osc.start(time);
-osc.stop(time+decay+.02);
-
-}
-
-events.forEach(event=>{
-
-let time=event.time/1000;
-
-let configs={
-mandar:[125,.30,.55],
-nagada:[65,.85,.8],
-timki:[240,.13,.6],
-dhol:[105,.32,.65],
-dholak:[190,.22,.55],
-mohri:[440,.5,.25],
-bansuri:[523,.7,.2],
-jhanjh:[800,.8,.45],
-manjira:[1450,.5,.4],
-gudum:[100,.5,.6]
-};
-
-let c=configs[event.name];
-
-if(!c)return;
-
-makeTone(time,c[0],c[1],c[2],
-event.name==="bansuri"?"sine":"triangle");
-
-});
-
-offline.startRendering().then(buffer=>{
-
-let channels=[];
-
-for(let c=0;c<buffer.numberOfChannels;c++){
-channels.push(buffer.getChannelData(c));
-}
-
-let frames=buffer.length;
-let dataSize=frames*2*2;
-let array=new ArrayBuffer(44+dataSize);
-let view=new DataView(array);
-
-function writeString(offset,string){
-
-for(let i=0;i<string.length;i++){
-view.setUint8(offset+i,string.charCodeAt(i));
-}
-
-}
-
-writeString(0,"RIFF");
-view.setUint32(4,36+dataSize,true);
-writeString(8,"WAVE");
-writeString(12,"fmt ");
-view.setUint32(16,16,true);
-view.setUint16(20,1,true);
-view.setUint16(22,2,true);
-view.setUint32(24,sampleRate,true);
-view.setUint32(28,sampleRate*4,true);
-view.setUint16(32,4,true);
-view.setUint16(34,16,true);
-writeString(36,"data");
-view.setUint32(40,dataSize,true);
-
-let offset=44;
-
-for(let i=0;i<frames;i++){
-
-for(let c=0;c<2;c++){
-
-let s=Math.max(-1,Math.min(1,channels[c][i]));
-
-view.setInt16(offset,
-s<0?s*32768:s*32767,true);
-
-offset+=2;
-
-}
-
-}
-
-let blob=new Blob([array],{type:"audio/wav"});
-
-let url=URL.createObjectURL(blob);
-
-let a=document.createElement("a");
-
-a.href=url;
-a.download="CG-Folk-Music.wav";
-a.click();
-
-URL.revokeObjectURL(url);
-
-$("recordStatus").textContent="WAV downloaded.";
-
-}).catch(error=>{
-
-console.error(error);
-
-alert("WAV export failed.");
-
-});
-
-}
-
 </script>
-
 </body>
 </html>
