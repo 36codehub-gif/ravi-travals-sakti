@@ -3,183 +3,160 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Fashion Photo Editor</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fashion Photo Editor</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101827;color:white;font-family:Arial,sans-serif}
-header{text-align:center;padding:22px;background:#192941}
+body{margin:0;background:#101827;color:white;font-family:Arial}
+header{text-align:center;padding:20px;background:#1c2d45}
 h1{color:#f5c451;margin:0}
-.container{max-width:850px;margin:25px auto;padding:15px}
-.card{background:#1b2b42;padding:20px;border-radius:15px}
-button,.upload{
- display:inline-block;background:#f5c451;color:#172033;
- padding:12px 17px;border:0;border-radius:8px;
- font-weight:bold;cursor:pointer;margin:5px
-}
+main{max-width:700px;margin:20px auto;padding:15px}
+.box{background:#1b2b42;padding:18px;border-radius:15px}
+button{padding:12px 16px;margin:5px;border:0;border-radius:8px;background:#f5c451;font-weight:bold;cursor:pointer}
 .secondary{background:#40536d;color:white}
-input,select{padding:10px;margin:8px 0;border-radius:8px}
-.preview{margin-top:20px;text-align:center}
-canvas{max-width:100%;border-radius:12px;background:#293b52}
-.controls{margin-top:20px}
-label{display:block;margin-top:15px;color:#d4dfed}
+input[type=file]{width:100%;margin:15px 0}
+canvas,video{width:100%;height:auto;background:#27374c;border-radius:10px;margin-top:15px}
+video{display:none}
+.controls{margin-top:15px}
 </style>
 </head>
 <body>
-
 <header>
-<h1>👔 AI Fashion Photo Editor</h1>
-<p>अपनी फोटो को नया Fashion Look दें</p>
+<h1>👔 Fashion Photo Editor</h1>
+<p>Upload • Edit • Download</p>
 </header>
 
-<div class="container">
-<div class="card">
-
-<h2>Upload Your Photo</h2>
-<input type="file" id="upload" accept="image/*">
-
-<div class="controls">
-<button onclick="openCamera()" class="secondary">📷 Camera</button>
-<button onclick="takePhoto()" class="secondary">Capture</button>
-</div>
-
-<video id="video" autoplay playsinline
-style="display:none;width:100%;max-width:400px"></video>
-
-<div class="preview">
-<canvas id="canvas"></canvas>
-</div>
-
-<div class="controls">
-<label>Fashion Filter</label>
-<select id="filter" onchange="applyFilter()">
-<option value="none">Original</option>
-<option value="grayscale(100%)">Black & White</option>
-<option value="sepia(70%)">Vintage</option>
-<option value="contrast(130%)">High Contrast</option>
-<option value="saturate(160%)">Vibrant</option>
-<option value="brightness(115%)">Bright</option>
-</select>
-
-<label>Shirt Color Preview</label>
-<input type="color" id="shirtColor" value="#2463a6">
-<button onclick="addShirtColor()">Apply Shirt Color</button>
-
-<label>Fashion Style</label>
-<select id="style">
-<option value="classic">Classic</option>
-<option value="casual">Casual</option>
-<option value="formal">Formal</option>
-<option value="sport">Sport</option>
-</select>
-<button onclick="addStyle()">Apply Style Label</button>
+<main>
+<div class="box">
+<h3>अपनी फोटो चुनें</h3>
+<input type="file" id="file" accept="image/*">
 
 <div>
-<button onclick="resetPhoto()" class="secondary">Reset</button>
-<button onclick="downloadPhoto()">⬇ Download Photo</button>
-</div>
-</div>
-</div>
+<button onclick="startCamera()">📷 Camera</button>
+<button onclick="capture()">Capture</button>
+<button class="secondary" onclick="stopCamera()">Stop Camera</button>
 </div>
 
+<video id="video" autoplay playsinline></video>
+<canvas id="canvas"></canvas>
+
+<div class="controls">
+<h3>Photo Filters</h3>
+<button onclick="filter('none')">Original</button>
+<button onclick="filter('grayscale(100%)')">B&W</button>
+<button onclick="filter('sepia(80%)')">Vintage</button>
+<button onclick="filter('brightness(120%)')">Bright</button>
+<button onclick="filter('contrast(140%)')">Contrast</button>
+</div>
+
+<div class="controls">
+<button class="secondary" onclick="resetImage()">Reset</button>
+<button onclick="download()">⬇ Download Photo</button>
+</div>
+</div>
+</main>
+
 <script>
-const upload=document.getElementById("upload");
+const fileInput=document.getElementById("file");
 const canvas=document.getElementById("canvas");
 const ctx=canvas.getContext("2d");
 const video=document.getElementById("video");
 
-let originalImage=null;
-let cameraStream=null;
-let currentFilter="none";
+let image=null;
+let stream=null;
+let selectedFilter="none";
 
-upload.addEventListener("change",function(e){
- const file=e.target.files[0];
+fileInput.addEventListener("change",function(){
+ const file=this.files[0];
  if(!file)return;
- const img=new Image();
- img.onload=()=>{
-  originalImage=img;
-  canvas.width=img.naturalWidth;
-  canvas.height=img.naturalHeight;
-  drawOriginal();
-  URL.revokeObjectURL(img.src);
+
+ const reader=new FileReader();
+ reader.onload=function(e){
+  const img=new Image();
+  img.onload=function(){
+   image=img;
+   canvas.width=img.naturalWidth;
+   canvas.height=img.naturalHeight;
+   draw();
+  };
+  img.src=e.target.result;
  };
- img.src=URL.createObjectURL(file);
+ reader.readAsDataURL(file);
 });
 
-function drawOriginal(){
- if(!originalImage)return;
- ctx.filter="none";
+function draw(){
+ if(!image)return;
  ctx.clearRect(0,0,canvas.width,canvas.height);
- ctx.drawImage(originalImage,0,0,canvas.width,canvas.height);
-}
-
-function applyFilter(){
- if(!originalImage)return alert("पहले फोटो अपलोड करें");
- currentFilter=document.getElementById("filter").value;
- ctx.filter=currentFilter;
- ctx.clearRect(0,0,canvas.width,canvas.height);
- ctx.drawImage(originalImage,0,0,canvas.width,canvas.height);
+ ctx.filter=selectedFilter;
+ ctx.drawImage(image,0,0,canvas.width,canvas.height);
  ctx.filter="none";
 }
 
-function addShirtColor(){
- if(!originalImage)return alert("पहले फोटो अपलोड करें");
- alert("Shirt color preview के लिए फोटो में शर्ट का हिस्सा manually select करना होगा। इस demo में automatic कपड़ों की पहचान उपलब्ध नहीं है।");
+function filter(value){
+ if(!image)return alert("पहले फोटो अपलोड करें");
+ selectedFilter=value;
+ draw();
 }
 
-function addStyle(){
- const style=document.getElementById("style").value;
- if(!originalImage)return alert("पहले फोटो अपलोड करें");
- const names={
- classic:"CLASSIC LOOK",
- casual:"CASUAL LOOK",
- formal:"FORMAL LOOK",
- sport:"SPORT LOOK"
- };
- applyFilter();
- ctx.font="bold 28px Arial";
- ctx.fillStyle="#ffffff";
- ctx.shadowColor="#000000";
- ctx.shadowBlur=5;
- ctx.fillText(names[style],25,canvas.height-30);
- ctx.shadowBlur=0;
-}
-
-async function openCamera(){
+async function startCamera(){
  try{
-  cameraStream=await navigator.mediaDevices.getUserMedia({video:true});
-  video.srcObject=cameraStream;
+  if(!navigator.mediaDevices?.getUserMedia){
+   alert("Camera के लिए HTTPS या localhost पर खोलें।");
+   return;
+  }
+  stopCamera();
+  stream=await navigator.mediaDevices.getUserMedia({
+   video:{facingMode:"environment"},
+   audio:false
+  });
+  video.srcObject=stream;
   video.style.display="block";
- }catch(e){
-  alert("Camera permission दें या HTTPS/localhost पर खोलें");
+  await video.play();
+ }catch(error){
+  alert("Camera permission दें। "+error.message);
  }
 }
 
-function takePhoto(){
- if(!cameraStream)return alert("पहले Camera चालू करें");
+function capture(){
+ if(!stream || !video.videoWidth){
+  alert("पहले Camera चालू करें");
+  return;
+ }
+ const img=new Image();
  canvas.width=video.videoWidth;
  canvas.height=video.videoHeight;
+ ctx.filter="none";
  ctx.drawImage(video,0,0,canvas.width,canvas.height);
- originalImage=new Image();
- originalImage.src=canvas.toDataURL("image/png");
- originalImage.onload=()=>{};
- cameraStream.getTracks().forEach(track=>track.stop());
- cameraStream=null;
+
+ img.onload=function(){
+  image=img;
+  selectedFilter="none";
+ };
+ img.src=canvas.toDataURL("image/png");
+ stopCamera();
+}
+
+function stopCamera(){
+ if(stream){
+  stream.getTracks().forEach(track=>track.stop());
+  stream=null;
+ }
+ video.srcObject=null;
  video.style.display="none";
 }
 
-function resetPhoto(){
- if(!originalImage)return;
- document.getElementById("filter").value="none";
- drawOriginal();
+function resetImage(){
+ if(!image)return alert("पहले फोटो अपलोड करें");
+ selectedFilter="none";
+ draw();
 }
 
-function downloadPhoto(){
+function download(){
  if(!canvas.width)return alert("पहले फोटो अपलोड करें");
- const link=document.createElement("a");
- link.download="fashion-photo.png";
- link.href=canvas.toDataURL("image/png");
- link.click();
+ const a=document.createElement("a");
+ a.download="edited-photo.png";
+ a.href=canvas.toDataURL("image/png");
+ a.click();
 }
 </script>
 </body>
