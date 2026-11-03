@@ -1,1 +1,727 @@
 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Tabla Studio</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+ background:#101116;
+ color:white;
+ font-family:Arial,sans-serif;
+}
+
+header{
+ text-align:center;
+ padding:25px 12px;
+ background:linear-gradient(135deg,#21182c,#38251d);
+ border-bottom:1px solid #55402d;
+}
+
+header h1{
+ color:#ffbd64;
+ letter-spacing:3px;
+ font-size:30px;
+}
+
+header p{color:#aaa;margin-top:8px}
+
+.container{
+ max-width:1100px;
+ margin:auto;
+ padding:20px;
+}
+
+.panel{
+ background:#1b1d27;
+ padding:20px;
+ border-radius:15px;
+ margin-bottom:20px;
+ border:1px solid #333442;
+}
+
+h2{
+ color:#ffbd64;
+ margin-bottom:18px;
+ font-size:20px;
+}
+
+.controls{
+ display:flex;
+ flex-wrap:wrap;
+ align-items:center;
+ gap:15px;
+ justify-content:space-between;
+}
+
+button{
+ background:#ffb957;
+ color:#171717;
+ border:none;
+ border-radius:8px;
+ padding:12px 18px;
+ font-weight:bold;
+ cursor:pointer;
+ transition:.2s;
+}
+
+button:hover{
+ background:#ffd18c;
+ transform:translateY(-2px);
+}
+
+button:active{transform:scale(.95)}
+
+input,select{
+ accent-color:#ffbd64;
+}
+
+input[type=file]{
+ display:block;
+ margin:15px 0;
+ max-width:100%;
+ color:#ddd;
+}
+
+input[type=range]{width:130px}
+
+.studio{
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:60px;
+ flex-wrap:wrap;
+ padding:35px 5px;
+}
+
+.drum{
+ text-align:center;
+ cursor:pointer;
+ user-select:none;
+}
+
+.drum-head{
+ width:240px;
+ height:240px;
+ border-radius:50%;
+ border:12px solid #b77c43;
+ background:
+ radial-gradient(circle,
+ #111 0 8%,
+ #333 9% 13%,
+ #777 14% 17%,
+ #252525 18% 25%,
+ #c59a69 26% 29%,
+ #8b532d 30% 68%,
+ #c28b52 69% 77%,
+ #452718 78%);
+ box-shadow:0 15px 35px #000;
+ transition:.1s;
+}
+
+.bayan .drum-head{
+ width:280px;
+ height:220px;
+ border-color:#aeb4bc;
+ background:
+ radial-gradient(ellipse,
+ #101010 0 9%,
+ #444 10% 15%,
+ #aaa 16% 19%,
+ #333 20% 27%,
+ #c5b49a 28% 31%,
+ #777 32% 68%,
+ #c3b29d 69% 78%,
+ #555 79%);
+}
+
+.drum.active .drum-head{
+ transform:scale(.94);
+ filter:brightness(1.5);
+}
+
+.drum h3{
+ color:#ffbd64;
+ margin-top:20px;
+ font-size:23px;
+}
+
+.drum small{color:#aaa}
+
+.bols{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(90px,1fr));
+ gap:12px;
+}
+
+.bol{
+ background:#303340;
+ color:white;
+ padding:18px 8px;
+ font-size:16px;
+ border:1px solid #555;
+}
+
+.bol span{
+ display:block;
+ font-size:11px;
+ color:#aaa;
+ margin-top:5px;
+}
+
+.status{
+ color:#78e6a1;
+ margin-top:12px;
+ font-size:14px;
+}
+
+select{
+ background:#303340;
+ color:white;
+ border:1px solid #555;
+ border-radius:8px;
+ padding:12px;
+}
+
+.actions{
+ display:flex;
+ flex-wrap:wrap;
+ gap:10px;
+}
+
+footer{
+ text-align:center;
+ padding:25px;
+ color:#888;
+}
+
+@media(max-width:600px){
+ .drum-head{width:190px;height:190px}
+ .bayan .drum-head{width:220px;height:180px}
+ .studio{gap:40px}
+ header h1{font-size:23px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🥁 REAL TABLA STUDIO</h1>
+<p>Professional Indian Percussion Experience</p>
+</header>
+
+<div class="container">
+
+<!-- AUDIO LIBRARY -->
+
+<div class="panel">
+<h2>🎵 Real Tabla Sound Library</h2>
+
+<p>Upload your real recorded WAV or MP3 tabla samples.</p>
+
+<input type="file" id="sampleUpload"
+accept="audio/*" multiple>
+
+<p class="status" id="status">
+Audio engine ready. Upload tabla samples.
+</p>
+</div>
+
+<!-- CONTROL PANEL -->
+
+<div class="panel">
+<h2>🎚 Studio Controls</h2>
+
+<div class="controls">
+
+<div>
+<label>Master Volume</label><br>
+<input type="range" min="0" max="100"
+value="85" id="volume">
+<span id="volumeText">85%</span>
+</div>
+
+<div>
+<label>Tempo</label><br>
+<input type="range" min="40" max="220"
+value="90" id="tempo">
+<span id="tempoText">90 BPM</span>
+</div>
+
+<div>
+<label>Select Taal</label><br>
+<select id="taal">
+<option value="teentaal">Teentaal</option>
+<option value="keherwa">Keherwa</option>
+<option value="dadra">Dadra</option>
+<option value="rupak">Rupak</option>
+</select>
+</div>
+
+</div>
+</div>
+
+<!-- TABLA -->
+
+<div class="studio">
+
+<div class="drum" id="dayan"
+onclick="playBol('na')">
+
+<div class="drum-head"></div>
+
+<h3>DAYAN</h3>
+<small>Right Hand Drum</small>
+
+</div>
+
+<div class="drum bayan" id="bayan"
+onclick="playBol('ge')">
+
+<div class="drum-head"></div>
+
+<h3>BAYAN</h3>
+<small>Left Hand Drum</small>
+
+</div>
+
+</div>
+
+<!-- BOLS -->
+
+<div class="panel">
+<h2>🎼 Tabla Bols</h2>
+
+<div class="bols">
+
+<button class="bol" onclick="playBol('na')">
+NA <span>Key A</span>
+</button>
+
+<button class="bol" onclick="playBol('tin')">
+TIN <span>Key D</span>
+</button>
+
+<button class="bol" onclick="playBol('tun')">
+TUN <span>Key F</span>
+</button>
+
+<button class="bol" onclick="playBol('ta')">
+TA <span>Key G</span>
+</button>
+
+<button class="bol" onclick="playBol('ge')">
+GE <span>Key S</span>
+</button>
+
+<button class="bol" onclick="playBol('ke')">
+KE <span>Key K</span>
+</button>
+
+<button class="bol" onclick="playBol('dha')">
+DHA <span>Key J</span>
+</button>
+
+<button class="bol" onclick="playBol('dhin')">
+DHIN <span>Key L</span>
+</button>
+
+<button class="bol" onclick="playBol('dhet')">
+DHET <span>Key Q</span>
+</button>
+
+<button class="bol" onclick="playBol('kat')">
+KAT <span>Key W</span>
+</button>
+
+<button class="bol" onclick="playBol('te')">
+TE <span>Key E</span>
+</button>
+
+<button class="bol" onclick="playBol('re')">
+RE <span>Key R</span>
+</button>
+
+</div>
+</div>
+
+<!-- TAAL -->
+
+<div class="panel">
+<h2>🥁 Automatic Taal Player</h2>
+
+<div class="actions">
+<button onclick="playTaal()">▶ Play Taal</button>
+<button onclick="stopTaal()">■ Stop</button>
+</div>
+
+<p class="status" id="taalStatus">Ready</p>
+</div>
+
+<!-- RECORDING -->
+
+<div class="panel">
+<h2>🔴 Recording Studio</h2>
+
+<div class="actions">
+<button onclick="startRecording()">● Record</button>
+<button onclick="stopRecording()">■ Stop</button>
+<button onclick="replayRecording()">▶ Replay</button>
+<button onclick="clearRecording()">Clear</button>
+</div>
+
+<p class="status" id="recordStatus">
+No recording yet.
+</p>
+</div>
+
+<footer>
+REAL TABLA STUDIO | Designed with HTML CSS JS
+</footer>
+
+</div>
+
+<script>
+
+// AUDIO ENGINE
+
+let audioContext;
+let masterGain;
+let samples={};
+
+let isRecording=false;
+let recording=[];
+let recordStart=0;
+let beatTimer=null;
+let replayTimers=[];
+
+const bolNames=[
+"na","tin","tun","ta","ge","ke",
+"dha","dhin","dhet","kat","te","re"
+];
+
+const keys={
+"a":"na","d":"tin","f":"tun","g":"ta",
+"s":"ge","k":"ke","j":"dha","l":"dhin",
+"q":"dhet","w":"kat","e":"te","r":"re"
+};
+
+async function initAudio(){
+
+if(!audioContext){
+
+audioContext=new (
+window.AudioContext ||
+window.webkitAudioContext
+)();
+
+masterGain=audioContext.createGain();
+
+masterGain.gain.value=.85;
+
+masterGain.connect(audioContext.destination);
+
+}
+
+if(audioContext.state==="suspended"){
+await audioContext.resume();
+}
+
+}
+
+// SAMPLE UPLOAD
+
+document.getElementById("sampleUpload")
+.addEventListener("change",async function(){
+
+await initAudio();
+
+let files=Array.from(this.files);
+
+let loaded=0;
+
+for(let file of files){
+
+try{
+
+let buffer=await file.arrayBuffer();
+
+let decoded=await audioContext.decodeAudioData(buffer);
+
+let name=file.name
+.toLowerCase()
+.replace(/\.(wav|mp3|ogg|m4a|aac)$/,"");
+
+samples[name]=decoded;
+
+loaded++;
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+
+document.getElementById("status").textContent=
+loaded+" audio samples successfully loaded.";
+
+});
+
+// REAL AUDIO PLAYBACK
+
+async function playBol(bol,save=true){
+
+await initAudio();
+
+let buffer=samples[bol];
+
+if(!buffer){
+
+document.getElementById("status").textContent=
+"Missing sample: "+bol+". Upload "+bol+".wav or "+bol+".mp3";
+
+return;
+
+}
+
+let source=audioContext.createBufferSource();
+
+let gain=audioContext.createGain();
+
+source.buffer=buffer;
+
+gain.gain.value=1;
+
+source.connect(gain);
+
+gain.connect(masterGain);
+
+source.start();
+
+if(save && isRecording){
+
+recording.push({
+bol:bol,
+time:performance.now()-recordStart
+});
+
+}
+
+let element=(
+bol==="ge" || bol==="ke"
+)?"bayan":"dayan";
+
+let drum=document.getElementById(element);
+
+drum.classList.add("active");
+
+setTimeout(()=>{
+drum.classList.remove("active");
+},130);
+
+}
+
+// KEYBOARD
+
+document.addEventListener("keydown",function(e){
+
+if(e.repeat || e.target.tagName==="INPUT" ||
+e.target.tagName==="SELECT")return;
+
+let bol=keys[e.key.toLowerCase()];
+
+if(bol)playBol(bol);
+
+});
+
+// VOLUME
+
+document.getElementById("volume")
+.addEventListener("input",function(){
+
+let value=this.value;
+
+document.getElementById("volumeText")
+.textContent=value+"%";
+
+if(masterGain){
+masterGain.gain.value=value/100;
+}
+
+});
+
+// TEMPO
+
+document.getElementById("tempo")
+.addEventListener("input",function(){
+
+document.getElementById("tempoText")
+.textContent=this.value+" BPM";
+
+});
+
+// TAAL PATTERNS
+
+const patterns={
+
+teentaal:[
+"dha","dhin","dhin","dha",
+"dha","dhin","dhin","dha",
+"dha","tin","tin","ta",
+"ta","dhin","dhin","dha"
+],
+
+keherwa:[
+"dha","ge","na","te",
+"na","ke","dhin","na"
+],
+
+dadra:[
+"dha","dhin","na",
+"dha","tin","na"
+],
+
+rupak:[
+"tin","tin","na",
+"dhin","na","dhin",
+"na"
+]
+
+};
+
+// TAAL PLAYER
+
+function playTaal(){
+
+stopTaal();
+
+let pattern=patterns[
+document.getElementById("taal").value
+];
+
+let index=0;
+
+let interval=60000/
+Number(document.getElementById("tempo").value);
+
+document.getElementById("taalStatus")
+.textContent="Playing "+document.getElementById("taal")
+.selectedOptions[0].text;
+
+beatTimer=setInterval(()=>{
+
+playBol(pattern[index],false);
+
+index=(index+1)%pattern.length;
+
+},interval);
+
+}
+
+function stopTaal(){
+
+if(beatTimer){
+clearInterval(beatTimer);
+beatTimer=null;
+}
+
+document.getElementById("taalStatus")
+.textContent="Stopped";
+
+}
+
+// RECORDING
+
+function startRecording(){
+
+stopTaal();
+
+recording=[];
+
+clearReplayTimers();
+
+isRecording=true;
+
+recordStart=performance.now();
+
+document.getElementById("recordStatus")
+.textContent="Recording started...";
+
+}
+
+function stopRecording(){
+
+isRecording=false;
+
+document.getElementById("recordStatus")
+.textContent=recording.length+
+" strokes recorded.";
+
+}
+
+// REPLAY
+
+function clearReplayTimers(){
+
+replayTimers.forEach(timer=>clearTimeout(timer));
+
+replayTimers=[];
+
+}
+
+function replayRecording(){
+
+stopRecording();
+
+clearReplayTimers();
+
+if(recording.length===0){
+
+alert("No recording found!");
+
+return;
+
+}
+
+recording.forEach(item=>{
+
+let timer=setTimeout(()=>{
+
+playBol(item.bol,false);
+
+},item.time);
+
+replayTimers.push(timer);
+
+});
+
+document.getElementById("recordStatus")
+.textContent="Playing your recording...";
+
+}
+
+function clearRecording(){
+
+stopRecording();
+
+clearReplayTimers();
+
+recording=[];
+
+document.getElementById("recordStatus")
+.textContent="Recording cleared.";
+
+}
+
+</script>
+
+</body>
+</html>
