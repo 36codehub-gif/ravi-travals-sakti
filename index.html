@@ -4,160 +4,535 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fashion Photo Editor</title>
+<title>NilOS — Desktop Environment</title>
 <style>
+:root{--accent:#4da3ff;--glass:rgba(19,29,46,.88);--text:#f5f7fb}
 *{box-sizing:border-box}
-body{margin:0;background:#101827;color:white;font-family:Arial}
-header{text-align:center;padding:20px;background:#1c2d45}
-h1{color:#f5c451;margin:0}
-main{max-width:700px;margin:20px auto;padding:15px}
-.box{background:#1b2b42;padding:18px;border-radius:15px}
-button{padding:12px 16px;margin:5px;border:0;border-radius:8px;background:#f5c451;font-weight:bold;cursor:pointer}
-.secondary{background:#40536d;color:white}
-input[type=file]{width:100%;margin:15px 0}
-canvas,video{width:100%;height:auto;background:#27374c;border-radius:10px;margin-top:15px}
-video{display:none}
-.controls{margin-top:15px}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;color:var(--text);overflow:hidden;background:#101a2b}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+#desktop{height:100dvh;width:100vw;position:relative;overflow:hidden;background:linear-gradient(135deg,#10243d,#174c68 52%,#13243b);background-size:cover}
+#wallpaper{position:absolute;inset:0;background:radial-gradient(circle at 75% 25%,#49b9c9 0,transparent 24%),radial-gradient(circle at 28% 80%,#3655a4 0,transparent 35%),linear-gradient(135deg,#101a35,#176078 55%,#182e54)}
+#desktopIcons{position:absolute;top:18px;left:15px;display:grid;grid-auto-flow:column;grid-template-rows:repeat(5,90px);gap:8px;z-index:1}
+.deskicon{width:82px;text-align:center;padding:7px 3px;border:1px solid transparent;border-radius:8px;cursor:pointer;font-size:12px;text-shadow:0 1px 3px #000}
+.deskicon:hover,.deskicon:focus{background:#ffffff22;border-color:#ffffff33;outline:0}
+.deskicon span{display:block;font-size:30px;margin-bottom:5px}
+#taskbar{position:absolute;bottom:0;left:0;right:0;height:58px;background:rgba(9,16,29,.82);backdrop-filter:blur(20px);border-top:1px solid #ffffff25;display:flex;align-items:center;padding:0 12px;gap:8px;z-index:9000}
+.tbbtn{height:42px;min-width:42px;border:0;border-radius:9px;background:transparent;color:white;font-size:21px}
+.tbbtn:hover,.tbbtn.active{background:#ffffff20}
+#taskApps{display:flex;gap:5px;flex:1;overflow:auto}
+.taskapp{height:38px;min-width:42px;padding:0 10px;border:0;border-radius:8px;background:#ffffff12;color:white;font-size:18px}
+.taskapp.active{border-bottom:3px solid var(--accent);background:#ffffff22}
+#clock{font-size:12px;text-align:right;min-width:82px;line-height:1.5}
+#startMenu{position:absolute;bottom:68px;left:12px;width:min(360px,calc(100vw - 24px));padding:17px;background:rgba(17,27,44,.96);backdrop-filter:blur(25px);border:1px solid #ffffff2a;border-radius:16px;z-index:8500;box-shadow:0 18px 60px #0008;display:none}
+#startMenu.show{display:block}
+#startSearch{width:100%;padding:12px;border-radius:9px;border:1px solid #ffffff25;background:#ffffff12;color:white;margin-bottom:14px;outline:none}
+.appgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.startapp{border:0;background:transparent;color:white;border-radius:10px;padding:12px 4px;font-size:12px}
+.startapp:hover{background:#ffffff18}
+.startapp b{display:block;font-size:26px;margin-bottom:5px}
+.startfoot{display:flex;justify-content:space-between;margin-top:14px;border-top:1px solid #ffffff20;padding-top:12px}
+.window{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:min(760px,calc(100vw - 24px));height:min(520px,calc(100dvh - 100px));min-width:280px;min-height:220px;background:#f3f6fb;color:#172033;border-radius:12px;box-shadow:0 22px 70px #0008;overflow:hidden;display:flex;flex-direction:column;z-index:20;border:1px solid #ffffff88}
+.window.maximized{left:8px;top:8px;transform:none;width:calc(100vw - 16px);height:calc(100dvh - 74px)}
+.titlebar{height:43px;flex:none;background:#e8edf5;display:flex;align-items:center;padding:0 10px;gap:9px;cursor:move;user-select:none;border-bottom:1px solid #d7deea}
+.wicon{font-size:18px}
+.wtitle{font-size:13px;font-weight:600;flex:1}
+.wcontrols{display:flex;gap:3px}
+.wcontrols button{border:0;background:transparent;width:34px;height:30px;border-radius:6px;color:#26344a}
+.wcontrols button:hover{background:#d5deeb}
+.wcontrols .close:hover{background:#e34e5e;color:white}
+.wcontent{flex:1;overflow:auto;padding:16px;background:#f7f9fc}
+.wcontent.dark{background:#111b2b;color:#eef4ff}
+.appbtn{border:0;border-radius:8px;padding:9px 12px;background:#246fba;color:white;margin:3px}
+.secondary{background:#e2e9f3;color:#26344a}
+.field{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin:5px 0 12px;color:#172033;background:white}
+textarea.field{min-height:180px;resize:vertical}
+.card{background:white;border:1px solid #e0e6ef;border-radius:10px;padding:13px;margin:8px 0}
+.filegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
+.fileitem{padding:15px 8px;border-radius:9px;text-align:center;background:white;border:1px solid #e1e7ef;cursor:pointer;color:#172033}
+.fileitem span{display:block;font-size:28px;margin-bottom:6px}
+.calc{max-width:330px;margin:auto}
+.calcdisplay{width:100%;padding:17px;text-align:right;font-size:26px;border:1px solid #ccd5e2;border-radius:9px;margin-bottom:8px;background:#fff;color:#172033}
+.calcgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.calcgrid button{padding:16px 5px;border:0;border-radius:8px;background:#e2e9f3;color:#172033;font-size:17px}
+.calcgrid button.op{background:#d4e8ff}
+.calcgrid button.equal{background:#2477c5;color:white}
+.term{background:#0c1421;color:#b6f3c7;font-family:Consolas,monospace;height:100%;padding:12px;border-radius:8px;overflow:auto}
+.termout{white-space:pre-wrap}
+.termline{display:flex;gap:7px}
+.termline input{background:transparent;border:0;color:#b6f3c7;outline:none;flex:1;font-family:inherit}
+.settingrow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e1e6ee;gap:10px}
+#contextToast{position:absolute;right:18px;bottom:75px;background:#17243a;color:white;padding:12px 16px;border-radius:10px;display:none;z-index:9500;box-shadow:0 8px 30px #0006}
+@media(max-width:600px){
+ #desktopIcons{grid-template-rows:repeat(4,82px);grid-auto-flow:column}
+ .deskicon{width:68px;font-size:11px}
+ .window{height:calc(100dvh - 95px);top:45%}
+ .window.maximized{height:calc(100dvh - 70px)}
+ #taskbar{height:54px;padding:0 6px;gap:3px}
+ #clock{min-width:68px;font-size:10px}
+}
 </style>
 </head>
 <body>
-<header>
-<h1>👔 Fashion Photo Editor</h1>
-<p>Upload • Edit • Download</p>
-</header>
+<div id="desktop">
+ <div id="wallpaper"></div>
 
-<main>
-<div class="box">
-<h3>अपनी फोटो चुनें</h3>
-<input type="file" id="file" accept="image/*">
+ <div id="desktopIcons">
+  <div class="deskicon" onclick="openApp('files')"><span>📁</span>File Explorer</div>
+  <div class="deskicon" onclick="openApp('notes')"><span>📝</span>Notepad</div>
+  <div class="deskicon" onclick="openApp('browser')"><span>🌐</span>Browser</div>
+  <div class="deskicon" onclick="openApp('calculator')"><span>🧮</span>Calculator</div>
+  <div class="deskicon" onclick="openApp('settings')"><span>⚙️</span>Settings</div>
+ </div>
 
-<div>
-<button onclick="startCamera()">📷 Camera</button>
-<button onclick="capture()">Capture</button>
-<button class="secondary" onclick="stopCamera()">Stop Camera</button>
+ <div id="windows"></div>
+
+ <div id="startMenu">
+  <input id="startSearch" placeholder="Search apps..." oninput="filterApps(this.value)">
+  <div class="appgrid" id="startApps"></div>
+  <div class="startfoot">
+   <span>👤 NilOS User</span>
+   <button class="appbtn" onclick="powerMenu()">⏻ Power</button>
+  </div>
+ </div>
+
+ <div id="contextToast"></div>
+
+ <div id="taskbar">
+  <button class="tbbtn" title="Start" onclick="toggleStart()">⊞</button>
+  <button class="tbbtn" title="Search" onclick="toggleStart();document.getElementById('startSearch').focus()">⌕</button>
+  <div id="taskApps"></div>
+  <button class="tbbtn" title="Quick settings" onclick="openApp('settings')">⚙</button>
+  <div id="clock"></div>
+ </div>
 </div>
-
-<video id="video" autoplay playsinline></video>
-<canvas id="canvas"></canvas>
-
-<div class="controls">
-<h3>Photo Filters</h3>
-<button onclick="filter('none')">Original</button>
-<button onclick="filter('grayscale(100%)')">B&W</button>
-<button onclick="filter('sepia(80%)')">Vintage</button>
-<button onclick="filter('brightness(120%)')">Bright</button>
-<button onclick="filter('contrast(140%)')">Contrast</button>
-</div>
-
-<div class="controls">
-<button class="secondary" onclick="resetImage()">Reset</button>
-<button onclick="download()">⬇ Download Photo</button>
-</div>
-</div>
-</main>
 
 <script>
-const fileInput=document.getElementById("file");
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-const video=document.getElementById("video");
+const appInfo={
+ files:{title:'File Explorer',icon:'📁'},
+ notes:{title:'Notepad',icon:'📝'},
+ browser:{title:'Nil Browser',icon:'🌐'},
+ calculator:{title:'Calculator',icon:'🧮'},
+ settings:{title:'Settings',icon:'⚙️'},
+ terminal:{title:'Terminal',icon:'⌨️'},
+ about:{title:'About NilOS',icon:'💠'},
+ paint:{title:'Paint',icon:'🎨'}
+};
 
-let image=null;
-let stream=null;
-let selectedFilter="none";
+let z=30,winCount=0,windows={},notesText=localStorage.getItem('nilos_note')||'';
+let wallpapers=[
+ 'linear-gradient(135deg,#101a35,#176078 55%,#182e54)',
+ 'linear-gradient(135deg,#34185b,#146c80)',
+ 'linear-gradient(135deg,#263238,#607d8b)',
+ 'linear-gradient(135deg,#42275a,#734b6d)'
+];
 
-fileInput.addEventListener("change",function(){
- const file=this.files[0];
- if(!file)return;
+const $=id=>document.getElementById(id);
 
- const reader=new FileReader();
- reader.onload=function(e){
-  const img=new Image();
-  img.onload=function(){
-   image=img;
-   canvas.width=img.naturalWidth;
-   canvas.height=img.naturalHeight;
-   draw();
-  };
-  img.src=e.target.result;
- };
- reader.readAsDataURL(file);
-});
-
-function draw(){
- if(!image)return;
- ctx.clearRect(0,0,canvas.width,canvas.height);
- ctx.filter=selectedFilter;
- ctx.drawImage(image,0,0,canvas.width,canvas.height);
- ctx.filter="none";
+function toggleStart(){
+ $('startMenu').classList.toggle('show');
+ $('startSearch').value='';
+ filterApps('');
 }
 
-function filter(value){
- if(!image)return alert("पहले फोटो अपलोड करें");
- selectedFilter=value;
- draw();
+function filterApps(q){
+ $('startApps').innerHTML=Object.entries(appInfo)
+ .filter(([k,v])=>(k+' '+v.title).toLowerCase().includes(q.toLowerCase()))
+ .map(([k,v])=>`<button class="startapp" onclick="openApp('${k}');toggleStart()"><b>${v.icon}</b>${v.title}</button>`)
+ .join('');
 }
 
-async function startCamera(){
- try{
-  if(!navigator.mediaDevices?.getUserMedia){
-   alert("Camera के लिए HTTPS या localhost पर खोलें।");
-   return;
-  }
-  stopCamera();
-  stream=await navigator.mediaDevices.getUserMedia({
-   video:{facingMode:"environment"},
-   audio:false
-  });
-  video.srcObject=stream;
-  video.style.display="block";
-  await video.play();
- }catch(error){
-  alert("Camera permission दें। "+error.message);
- }
-}
+filterApps('');
 
-function capture(){
- if(!stream || !video.videoWidth){
-  alert("पहले Camera चालू करें");
+function openApp(id){
+ if(windows[id]){
+  const w=$(windows[id]);
+  w.style.display='flex';
+  w.style.zIndex=++z;
+  activateTask(id);
   return;
  }
- const img=new Image();
- canvas.width=video.videoWidth;
- canvas.height=video.videoHeight;
- ctx.filter="none";
- ctx.drawImage(video,0,0,canvas.width,canvas.height);
 
- img.onload=function(){
-  image=img;
-  selectedFilter="none";
+ const info=appInfo[id];
+ if(!info)return;
+
+ const el=document.createElement('div');
+ el.className='window';
+ el.id='win_'+id;
+ el.style.zIndex=++z;
+
+ el.innerHTML=`
+ <div class="titlebar" onmousedown="dragStart(event,'${id}')">
+  <span class="wicon">${info.icon}</span>
+  <span class="wtitle">${info.title}</span>
+  <div class="wcontrols">
+   <button onclick="minimizeApp('${id}')">—</button>
+   <button onclick="maximizeApp('${id}')">□</button>
+   <button class="close" onclick="closeApp('${id}')">✕</button>
+  </div>
+ </div>
+ <div class="wcontent" id="content_${id}">${appContent(id)}</div>`;
+
+ $('windows').appendChild(el);
+ windows[id]=el.id;
+ makeTask(id);
+ activateTask(id);
+
+ if(id==='paint')initPaint();
+ if(id==='terminal')$('termInput').focus();
+}
+
+function appContent(id){
+ if(id==='files')return `
+ <h2>📁 Home</h2>
+ <p>NilOS File Explorer</p>
+ <div class="filegrid">
+  <div class="fileitem" onclick="showToast('Documents folder opened')"><span>📂</span>Documents</div>
+  <div class="fileitem" onclick="showToast('Downloads folder opened')"><span>⬇️</span>Downloads</div>
+  <div class="fileitem" onclick="showToast('Pictures folder opened')"><span>🖼️</span>Pictures</div>
+  <div class="fileitem" onclick="showToast('Music folder opened')"><span>🎵</span>Music</div>
+  <div class="fileitem" onclick="showToast('Videos folder opened')"><span>🎬</span>Videos</div>
+  <div class="fileitem" onclick="showToast('This PC selected')"><span>💻</span>This PC</div>
+ </div>
+ <div class="card">
+  <b>Storage</b>
+  <p>Local browser storage: notes and settings are saved in this browser. This demo does not access your computer's private files.</p>
+ </div>`;
+
+ if(id==='notes')return `
+ <h2>📝 Notepad</h2>
+ <p>Your notes are automatically saved in this browser.</p>
+ <textarea class="field" id="noteArea" placeholder="यहाँ लिखना शुरू करें...">${escapeHTML(notesText)}</textarea>
+ <button class="appbtn" onclick="saveNote()">Save Note</button>
+ <button class="appbtn secondary" onclick="downloadNote()">Download TXT</button>
+ <span id="noteStatus"></span>`;
+
+ if(id==='calculator')return `
+ <div class="calc">
+  <h2>🧮 Calculator</h2>
+  <input id="calcDisplay" class="calcdisplay" value="0" readonly>
+  <div class="calcgrid">
+   ${['C','⌫','%','÷','7','8','9','×','4','5','6','−','1','2','3','+','±','0','.','='].map(x=>`<button class="${['÷','×','−','+','%'].includes(x)?'op':''} ${x==='='?'equal':''}" onclick="calcKey('${x}')">${x}</button>`).join('')}
+  </div>
+ </div>`;
+
+ if(id==='settings')return `
+ <h2>⚙️ Settings</h2>
+ <div class="settingrow">
+  <div><b>Wallpaper</b><div>Change desktop background</div></div>
+  <select class="field" style="width:170px;margin:0" onchange="setWallpaper(this.value)">
+   <option value="0">Ocean</option>
+   <option value="1">Purple</option>
+   <option value="2">Slate</option>
+   <option value="3">Dusk</option>
+  </select>
+ </div>
+ <div class="settingrow">
+  <div><b>Accent color</b><div>Taskbar highlight color</div></div>
+  <input type="color" value="#4da3ff" style="width:65px" onchange="document.documentElement.style.setProperty('--accent',this.value)">
+ </div>
+ <div class="settingrow">
+  <div><b>Theme</b><div>Desktop appearance</div></div>
+  <button class="appbtn secondary" onclick="toggleTheme()">Toggle light/dark</button>
+ </div>
+ <div class="settingrow">
+  <div><b>System</b><div>NilOS Web Desktop v1.0</div></div>
+  <button class="appbtn" onclick="openApp('about')">About</button>
+ </div>
+ <p>Settings are applied to this browser session.</p>`;
+
+ if(id==='browser')return `
+ <h2>🌐 Nil Browser</h2>
+ <p>This is a demo browser window. Use the address field to open a website in a new tab.</p>
+ <form onsubmit="visitSite(event)">
+  <input id="webAddress" class="field" placeholder="https://example.com" value="https://www.wikipedia.org">
+  <button class="appbtn">Go ↗</button>
+ </form>
+ <div class="card">
+  <b>Quick links</b>
+  <p>
+   <a href="https://www.wikipedia.org" target="_blank">Wikipedia</a> ·
+   <a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a> ·
+   <a href="https://www.openai.com" target="_blank">OpenAI</a>
+  </p>
+ </div>
+ <p>For security, websites open in a separate browser tab.</p>`;
+
+ if(id==='terminal')return `
+ <div class="term">
+  <div id="termOutput" class="termout">NilOS Terminal [Version 1.0]<br>Type help to see available commands.<br><br></div>
+  <div class="termline">
+   user@nilos:~$ <input id="termInput" autocomplete="off" onkeydown="terminalKey(event)">
+  </div>
+ </div>`;
+
+ if(id==='about')return `
+ <div style="text-align:center;padding:25px">
+  <div style="font-size:64px">💠</div>
+  <h1>NilOS</h1>
+  <p>Next-generation browser desktop environment</p>
+  <p>Version 1.0.0 · Web Edition</p>
+  <div class="card">Built with HTML, CSS and JavaScript.<br>This is a desktop simulation, not a bootable operating system.</div>
+ </div>`;
+
+ if(id==='paint')return `
+ <h2>🎨 Mini Paint</h2>
+ <p>Draw with your mouse or finger.</p>
+ <input type="color" id="paintColor" value="#1769aa">
+ <button class="appbtn secondary" onclick="clearPaint()">Clear</button>
+ <canvas id="paintCanvas" width="650" height="330" style="width:100%;background:white;border:1px solid #ccd"></canvas>`;
+
+ return '';
+}
+
+function makeTask(id){
+ let b=document.createElement('button');
+ b.className='taskapp';
+ b.id='task_'+id;
+ b.title=appInfo[id].title;
+ b.textContent=appInfo[id].icon;
+ b.onclick=()=>{
+  let w=$(windows[id]);
+  if(w.style.display==='none'){
+   w.style.display='flex';
+   w.style.zIndex=++z;
+   activateTask(id);
+  }else if(Number(w.style.zIndex)===z){
+   minimizeApp(id);
+  }else{
+   w.style.zIndex=++z;
+   activateTask(id);
+  }
  };
- img.src=canvas.toDataURL("image/png");
- stopCamera();
+ $('taskApps').appendChild(b);
 }
 
-function stopCamera(){
- if(stream){
-  stream.getTracks().forEach(track=>track.stop());
-  stream=null;
+function activateTask(id){
+ document.querySelectorAll('.taskapp').forEach(x=>x.classList.remove('active'));
+ if($('task_'+id))$('task_'+id).classList.add('active');
+}
+
+function closeApp(id){
+ $(windows[id])?.remove();
+ delete windows[id];
+ $('task_'+id)?.remove();
+}
+
+function minimizeApp(id){
+ $(windows[id]).style.display='none';
+ $('task_'+id)?.classList.remove('active');
+}
+
+function maximizeApp(id){
+ $(windows[id]).classList.toggle('maximized');
+}
+
+function dragStart(e,id){
+ if(e.target.tagName==='BUTTON')return;
+ let w=$(windows[id]);
+ if(w.classList.contains('maximized'))return;
+
+ w.style.zIndex=++z;
+ let r=w.getBoundingClientRect();
+ let dx=e.clientX-r.left,dy=e.clientY-r.top;
+
+ function move(ev){
+  w.style.left=(ev.clientX-dx)+'px';
+  w.style.top=(ev.clientY-dy)+'px';
+  w.style.transform='none';
  }
- video.srcObject=null;
- video.style.display="none";
+
+ function stop(){
+  document.removeEventListener('mousemove',move);
+  document.removeEventListener('mouseup',stop);
+ }
+
+ document.addEventListener('mousemove',move);
+ document.addEventListener('mouseup',stop);
 }
 
-function resetImage(){
- if(!image)return alert("पहले फोटो अपलोड करें");
- selectedFilter="none";
- draw();
+function saveNote(){
+ notesText=$('noteArea').value;
+ localStorage.setItem('nilos_note',notesText);
+ $('noteStatus').textContent=' ✓ Saved';
 }
 
-function download(){
- if(!canvas.width)return alert("पहले फोटो अपलोड करें");
- const a=document.createElement("a");
- a.download="edited-photo.png";
- a.href=canvas.toDataURL("image/png");
+function downloadNote(){
+ let blob=new Blob([$('noteArea').value],{type:'text/plain'});
+ let a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download='NilOS-Note.txt';
  a.click();
+ URL.revokeObjectURL(a.href);
 }
+
+let calcValue='0',calcStored=null,calcOp=null,calcFresh=false;
+
+function calcKey(k){
+ let d=$('calcDisplay');
+ if(!d)return;
+
+ if(k==='C'){
+  calcValue='0';calcStored=null;calcOp=null;calcFresh=false;
+ }else if(k==='⌫'){
+  calcValue=calcValue.length>1?calcValue.slice(0,-1):'0';
+ }else if(k==='±'){
+  calcValue=String(-Number(calcValue));
+ }else if(k==='%'){
+  calcValue=String(Number(calcValue)/100);
+ }else if(['+','−','×','÷'].includes(k)){
+  calcStored=Number(calcValue);
+  calcOp=k;
+  calcFresh=true;
+ }else if(k==='='){
+  if(calcOp){
+   let b=Number(calcValue),a=calcStored;
+   let v=calcOp==='+'?a+b:
+         calcOp==='−'?a-b:
+         calcOp==='×'?a*b:
+         b===0?NaN:a/b;
+
+   calcValue=Number.isFinite(v)?String(Number(v.toFixed(8))):'Error';
+   calcOp=null;
+   calcStored=null;
+   calcFresh=true;
+  }
+ }else{
+  if(calcFresh){calcValue='0';calcFresh=false}
+  if(k==='.'&&calcValue.includes('.')){}
+  else calcValue=calcValue==='0'&&k!=='.'?k:calcValue+k;
+ }
+ d.value=calcValue;
+}
+
+function setWallpaper(n){
+ $('wallpaper').style.background=wallpapers[Number(n)];
+}
+
+function toggleTheme(){
+ let c=$('desktop');
+ c.style.filter=c.style.filter?'':'brightness(1.18)';
+}
+
+function visitSite(e){
+ e.preventDefault();
+ let u=$('webAddress').value.trim();
+ if(!/^https?:\/\//i.test(u))u='https://'+u;
+
+ try{
+  let url=new URL(u);
+  if(!['http:','https:'].includes(url.protocol))throw 0;
+  window.open(url.href,'_blank','noopener');
+ }catch{
+  showToast('Please enter a valid web address');
+ }
+}
+
+function terminalKey(e){
+ if(e.key!=='Enter')return;
+
+ let input=$('termInput');
+ let cmd=input.value.trim();
+ let out=$('termOutput');
+
+ let line=document.createElement('div');
+ line.textContent='user@nilos:~$ '+cmd;
+ out.appendChild(line);
+
+ let response='';
+
+ switch(cmd.toLowerCase()){
+  case 'help':
+   response='Commands: help, date, time, whoami, apps, clear, version, about';
+   break;
+  case 'date':
+   response=new Date().toDateString();
+   break;
+  case 'time':
+   response=new Date().toLocaleTimeString();
+   break;
+  case 'whoami':
+   response='NilOS User';
+   break;
+  case 'apps':
+   response=Object.keys(appInfo).join(', ');
+   break;
+  case 'version':
+   response='NilOS Web Edition 1.0.0';
+   break;
+  case 'about':
+   response='A browser-based desktop simulation.';
+   break;
+  case 'clear':
+   out.innerHTML='';
+   break;
+  case '':
+   break;
+  default:
+   response='Command not found: '+cmd;
+ }
+
+ if(response){
+  let r=document.createElement('div');
+  r.textContent=response;
+  out.appendChild(r);
+ }
+
+ input.value='';
+ out.scrollTop=out.scrollHeight;
+}
+
+function powerMenu(){
+ showToast('Power menu: Browser desktop can be closed by closing this tab.');
+ $('startMenu').classList.remove('show');
+}
+
+function showToast(t){
+ $('contextToast').textContent=t;
+ $('contextToast').style.display='block';
+ clearTimeout(window.toastTimer);
+ window.toastTimer=setTimeout(()=>$('contextToast').style.display='none',2600);
+}
+
+function escapeHTML(s){
+ return s.replace(/[&<>"']/g,c=>({
+  '&':'&amp;',
+  '<':'&lt;',
+  '>':'&gt;',
+  '"':'&quot;',
+  "'":'&#39;'
+ }[c]));
+}
+
+function updateClock(){
+ let d=new Date();
+ $('clock').innerHTML=
+  d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+
+  '<br>'+d.toLocaleDateString();
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+document.addEventListener('mousedown',e=>{
+ if(e.target.closest('.window')){
+  let w=e.target.closest('.window');
+  w.style.zIndex=++z;
+  let id=w.id.replace('win_','');
+  activateTask(id);
+ }
+});
+
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape')$('startMenu').classList.remove('show');
+
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'&&windows.notes){
+  e.preventDefault();
+  saveNote();
+ }
+});
+
+openApp('about');
 </script>
 </body>
 </html>
